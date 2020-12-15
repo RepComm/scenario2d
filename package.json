@@ -1,0 +1,36 @@
+{
+  "name": "@repcomm/scenario2d",
+  "version": "1.0.18",
+  "description": "2d graphics / svg / transform helper for html5 canvas",
+  "main": "./lib/mod.js",
+  "types": "./lib/mod.d.ts",
+  "files": [
+    "lib/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RepComm/scenario2d.git"
+  },
+  "keywords": [
+    "typescript",
+    "esmodules",
+    "babel",
+    "scene",
+    "svg"
+  ],
+  "author": "Jonathan Crowder",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/RepComm/scenario2d/issues"
+  },
+  "homepage": "https://github.com/RepComm/scenario2d#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/plugin-transform-typescript": "^7.10.5",
+    "@babel/preset-env": "^7.10.4"
+  },
+  "scripts": {
+    "build": "babel src --extensions '.ts' --copy-files -d lib"
+  }
+}
