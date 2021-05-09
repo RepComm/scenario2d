@@ -3,10 +3,24 @@ import { Scene2D, GradientDef } from "./scene/scene2d";
 import { Object2D } from "./scene/object";
 import { PathObject2D } from "./scene/pathobject";
 
+const textDecoder = new TextDecoder();
+
 export class Resource {
   response: Response;
   uri: string;
-
+  arrayBuffer: ArrayBuffer;
+  static loadFromArrayBuffer (buffer: ArrayBuffer, premadeResource?: Resource): Promise<Resource> {
+    return new Promise(async (_resolve, _reject)=>{
+      let result: Resource;
+      if (premadeResource) {
+        result = premadeResource;
+      } else {
+        result = new Resource();
+      }
+      result.arrayBuffer = buffer;
+      _resolve(result);
+    });
+  }
   static load(uri: string, premadeResource?: Resource): Promise<Resource> {
     return new Promise(async (resolve, reject) => {
       let result: Resource;
@@ -24,7 +38,21 @@ export class Resource {
 
 export class TextResource extends Resource {
   text: string;
+  static loadFromArrayBuffer (buffer: ArrayBuffer, premadeResource: TextResource): Promise<TextResource> {
+    return new Promise(async (_resolve, _reject)=>{
+      let result: TextResource;
+      if (premadeResource) {
+        result = premadeResource;
+      } else {
+        result = new TextResource();
+      }
+      result = await Resource.loadFromArrayBuffer(buffer, result) as TextResource;
 
+      result.text = await textDecoder.decode(result.arrayBuffer);
+
+      _resolve(result);
+    });
+  }
   static load(uri: string, premadeResource?: TextResource): Promise<TextResource> {
     return new Promise(async (resolve, reject) => {
       let result: TextResource;
@@ -45,6 +73,23 @@ export class TextResource extends Resource {
 export class XmlResource extends TextResource {
   static DOM_PARSER: DOMParser;
   xml: Document;
+
+  static loadFromArrayBuffer (buffer: ArrayBuffer, premadeResource?: XmlResource, type: DOMParserSupportedType = "text/xml"): Promise<XmlResource> {
+    return new Promise(async (_resolve, _reject)=>{
+      let result: XmlResource;
+      if (premadeResource) {
+        result = premadeResource;
+      } else {
+        result = new XmlResource();
+      }
+      result = await TextResource.loadFromArrayBuffer(buffer, result) as XmlResource;
+      // result = await TextResource.load(uri, result) as XmlResource;
+
+      result.xml = XmlResource.DOM_PARSER.parseFromString(result.text, type);
+
+      _resolve(result);
+    });
+  }
 
   static load(uri: string, premadeResource?: XmlResource, type: DOMParserSupportedType = "text/xml"): Promise<XmlResource> {
     return new Promise(async (resolve, reject) => {
@@ -249,6 +294,50 @@ export class SceneResource extends XmlResource {
         SceneResource.parseNodeChildren(scene, child, parent);
       }
     }
+  }
+  static loadFromArrayBuffer (buffer: ArrayBuffer, premadeResource?: SceneResource, type: DOMParserSupportedType = "image/svg+xml"): Promise<SceneResource> {
+    return new Promise(async (_resolve, _reject)=>{
+      let result: SceneResource;
+      if (premadeResource) {
+        result = premadeResource;
+      } else {
+        result = new SceneResource();
+      }
+      result = await XmlResource.loadFromArrayBuffer(buffer, result) as SceneResource;
+
+      result.scene = new Scene2D();
+
+      let svgs = result.xml.getElementsByTagName("svg");
+      let firstSvg = svgs[0];
+      result.scene.width = firstSvg.width.baseVal.value;
+      result.scene.height = firstSvg.height.baseVal.value;
+
+      if (svgs.length < 1) {
+        console.warn("No svg elements found in document, scene imported is empty!");
+      } else {
+        SceneResource.parseNodeChildren(
+          result.scene,
+          firstSvg,
+          result.scene
+        );
+      }
+
+      result.scene.gradientsForEach((def, id)=>{
+        if (def.copyFrom) {
+          let gradNode = firstSvg.getElementById(def.copyFrom);
+          if (!gradNode) {
+            console.warn("Couldn't use href of linear gradient, no gradient found by id", def.copyFrom);
+          } else {
+            if (gradNode instanceof SVGLinearGradientElement) {
+              SceneResource.parseSvgGradient(gradNode, def);
+            } else {
+              console.warn("Couldn't use href of linear gradient as the element it points to by id was not a linear gradient", gradNode);
+            }
+          }
+        }
+      });
+      _resolve(result);
+    });
   }
   static load(uri: string, premadeResource?: SceneResource, type: DOMParserSupportedType = "image/svg+xml"): Promise<SceneResource> {
     return new Promise(async (resolve, reject) => {

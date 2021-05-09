@@ -1,6 +1,6 @@
 {
   "name": "@repcomm/scenario2d",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "2d graphics / svg / transform helper for html5 canvas",
   "main": "./lib/mod.js",
   "types": "./lib/mod.d.ts",
