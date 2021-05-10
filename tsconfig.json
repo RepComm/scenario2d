@@ -2,7 +2,11 @@
   "compilerOptions": {
     "target": "ESNEXT",
     "module":"esnext",
-		"moduleResolution": "node"
+		"moduleResolution": "node",
+    "declaration": true,
+    "allowJs": true,
+    "emitDeclarationOnly": true,
+    "outDir": "lib"
   },
   "include": [
     "src/**/*"
