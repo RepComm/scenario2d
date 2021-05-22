@@ -4,6 +4,7 @@ import { GradientDef } from "./scene2d";
 
 export class PathObject2D extends Object2D {
   path: Path2D;
+  private _d: string;
   fillStyle: string | CanvasGradient | CanvasPattern;
   strokeStyle: string | CanvasGradient | CanvasPattern;
   lineWidth: number;
@@ -22,6 +23,7 @@ export class PathObject2D extends Object2D {
     this.doFill = true;
     this.needsFillGradientCompile = false;
     this.needsStrokeGradientCompile = false;
+    this._d = "";
   }
   enableStroke(enable: boolean = true): PathObject2D {
     this.doStroke = enable;
@@ -31,11 +33,18 @@ export class PathObject2D extends Object2D {
     this.doFill = enable;
     return this;
   }
-  setPath(path: Path2D): PathObject2D {
+  private setPath(path: Path2D): PathObject2D {
     this.path = path;
     return this;
   }
-  getPath(): Path2D {
+  set d (str: string) {
+    this.path = new Path2D(str);
+    this._d = str;
+  }
+  get d (): string {
+    return this._d;
+  }
+  private getPath(): Path2D {
     return this.path;
   }
   hasPath(): boolean {

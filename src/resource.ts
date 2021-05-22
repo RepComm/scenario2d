@@ -191,14 +191,15 @@ export class SceneResource extends XmlResource {
 
     let dPath = node.getAttribute("d");
 
-    let path: Path2D;
+    // let path: Path2D;
     if (dPath) {
-      path = new Path2D(dPath);
+      // path = new Path2D(dPath);
     } else {
-      path = new Path2D();
-      console.warn("Warning, path had no 'd' attribute. Empty Path2D", path);
+      // path = new Path2D();
+      console.warn("Warning, path had no 'd' attribute. Empty Path2D", dPath);
     }
-    result.setPath(path);
+    // result.setPath(path);
+    result.d = dPath;
 
     if (node.style.fill) {
       if (node.style.fill.trim().startsWith("url")) {
