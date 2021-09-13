@@ -1,60 +1,16 @@
 
-import {
-  EPSILON,
-  clamp,
-  lerp,
-  radians,
-  randomByte
-} from "./math/general";
+export * from "./math/general";
 
-import {
-  Transform2d
-} from "./math/transform";
+export * from "./math/transform";
 
-import {
-  Vec2
-} from "./math/vec";
+export * from "./math/vec";
 
-import {
-  Object2D,
-  Object2DTraverseCallback
-} from "./scene/object";
+export * from "./math/matrix";
 
-import {
-  DOMMatrixDecomp,
-  Resource,
-  SceneResource,
-  TextResource,
-  XmlResource
-} from "./resource";
+export * from "./scene/object";
 
-import {
-  GradientDef,
-  GradientStopDef,
-  Scene2D
-} from "./scene/scene2d";
+export * from "./resource";
 
-import {
-  PathObject2D
-} from "./scene/pathobject";
+export * from "./scene/scene2d";
 
-export {
-  EPSILON,
-  clamp,
-  lerp,
-  radians,
-  randomByte,
-  Transform2d,
-  Vec2,
-  Object2D,
-  Object2DTraverseCallback,
-  DOMMatrixDecomp,
-  Resource,
-  SceneResource,
-  TextResource,
-  XmlResource,
-  GradientDef,
-  GradientStopDef,
-  Scene2D,
-  PathObject2D
-}
+export * from "./scene/pathobject";

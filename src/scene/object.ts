@@ -2,32 +2,57 @@
 import { Transform2d } from "../math/transform";
 
 export interface Object2DTraverseCallback {
-  (child: Object2D):void;
+  (child: Object2D): void;
 }
 
 export class Object2D {
   private parent: Object2D;
-  private _transform: Transform2d;
+
+  private _localTransform: Transform2d;
+  private _globalTransform: Transform2d;
+
   private children: Set<Object2D>;
   private preRenderStarted: boolean;
   private postRenderEnded: boolean;
   label: string;
-  constructor () {
-    this._transform = new Transform2d();
+  constructor() {
+    this._localTransform = new Transform2d();
+    this._globalTransform = new Transform2d();
+
     this.postRenderEnded = true;
     this.label = "";
   }
-  getTransform (): Transform2d {
-    return this._transform;
+  getTransform(): Transform2d {
+    return this._localTransform;
   }
-  get transform (): Transform2d {
-    return this._transform;
+  get transform(): Transform2d {
+    return this._localTransform;
   }
-  getChildByLabel (label: string): Object2D {
-    for (let child of this.children) {
-      if (child.label == label) return child;
+  getGlobalTransform (): Transform2d {
+    return this._globalTransform;
+  }
+  get globalTransform (): Transform2d {
+    return this._globalTransform;
+  }
+  getChildByLabel(label: string, recursive: boolean = true): Object2D {
+    let result: Object2D;
+
+    if (recursive) {
+      this.traverse((child)=>{
+        if (child.label == label) {
+          result = child;
+          return;
+        }
+      });
+    } else {
+      for (let child of this.children) {
+        if (child.label == label) {
+          result = child;
+          break;
+        }
+      }
     }
-    return undefined;
+    return result;
   }
   hasChildren(): boolean {
     return this.children && this.children.size > 0;
@@ -62,7 +87,7 @@ export class Object2D {
     this.parent = parent;
     return this;
   }
-  getParent (): Object2D {
+  getParent(): Object2D {
     return this.parent;
   }
   add(child: Object2D, alertChild: boolean = true): this {
@@ -79,22 +104,53 @@ export class Object2D {
     }
     return this;
   }
+  renderGlobalTransform () {
+    this._globalTransform.copy(this._localTransform);
+    
+    if (this.hasParent()) {
+      this._globalTransform.matrix.multiply(this.parent._globalTransform.matrix);
+    }
+    this._globalTransform.unrenderMatrix();
+  }
   preRender(ctx: CanvasRenderingContext2D) {
     if (this.preRenderStarted || !this.postRenderEnded) throw "Cannot pre render, previously pre-rendered without post render step";
     this.preRenderStarted = true;
     this.postRenderEnded = false;
     ctx.save();
-    ctx.translate(
-      this._transform.position.x,
-      this._transform.position.y
+
+    this._localTransform.renderMatrix();
+    
+    this.renderGlobalTransform();
+
+    ctx.setTransform(
+      this._globalTransform.matrix.a,
+      this._globalTransform.matrix.b,
+      this._globalTransform.matrix.c,
+      this._globalTransform.matrix.d,
+      this._globalTransform.matrix.e,
+      this._globalTransform.matrix.f
     );
-    ctx.rotate(
-      this._transform.rotation
-    );
-    ctx.scale(
-      this._transform.scale,
-      this._transform.scale
-    );
+
+    // ctx.setTransform(
+    //   this._localTransform.matrix.a,
+    //   this._localTransform.matrix.b,
+    //   this._localTransform.matrix.c,
+    //   this._localTransform.matrix.d,
+    //   this._localTransform.matrix.e,
+    //   this._localTransform.matrix.f
+    // );
+
+    // ctx.translate(
+    //   this.localTransform.position.x,
+    //   this.localTransform.position.y
+    // );
+    // ctx.rotate(
+    //   this.localTransform.rotation
+    // );
+    // ctx.scale(
+    //   this.localTransform.scale,
+    //   this.localTransform.scale
+    // );
   }
   postRender(ctx: CanvasRenderingContext2D) {
     if (!this.preRenderStarted || this.postRenderEnded) throw "Cannot post render, previously didn't pre render";
@@ -116,7 +172,7 @@ export class Object2D {
     this.postRender(ctx);
     return this;
   }
-  traverse (traverseCallback: Object2DTraverseCallback): this {
+  traverse(traverseCallback: Object2DTraverseCallback): this {
     if (!this.children) return this;
     for (let child of this.children) {
       traverseCallback(child);

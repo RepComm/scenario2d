@@ -33,7 +33,7 @@
     "typescript": "^4.2.4"
   },
   "scripts": {
-    "build": "babel src --extensions .ts --copy-files -d lib",
+    "build": "babel src --extensions .ts --copy-files -d lib & npm run build-types",
     "build-types": "tsc --project tsconfig.json"
   }
 }
