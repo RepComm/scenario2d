@@ -1,7 +1,7 @@
 
 // import { Vec2 } from "@repcomm/vec2d";
 
-import { Vec2 } from "./vec";
+import { Vec2 } from "./vec.js";
 
 let pi = Math.PI;
 let RAD2DEG = 180 / pi;

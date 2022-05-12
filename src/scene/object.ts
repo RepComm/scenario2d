@@ -1,5 +1,5 @@
 
-import { Transform2d } from "../math/transform";
+import { Transform2d } from "../math/transform.js";
 
 export interface Object2DTraverseCallback {
   (child: Object2D): void;

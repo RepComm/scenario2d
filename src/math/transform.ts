@@ -1,6 +1,6 @@
 
-import { Matrix, MatrixDecomposition } from "./matrix";
-import { Vec2 } from "./vec";
+import { Matrix, MatrixDecomposition } from "./matrix.js";
+import { Vec2 } from "./vec.js";
 
 export class Transform2d {
   position: Vec2;

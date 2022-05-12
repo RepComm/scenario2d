@@ -1,7 +1,7 @@
 
-import { Scene2D, GradientDef } from "./scene/scene2d";
-import { Object2D } from "./scene/object";
-import { PathObject2D } from "./scene/pathobject";
+import { Scene2D, GradientDef } from "./scene/scene2d.js";
+import { Object2D } from "./scene/object.js";
+import { PathObject2D } from "./scene/pathobject.js";
 
 const textDecoder = new TextDecoder();
 

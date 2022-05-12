@@ -1,5 +1,5 @@
 
-import { lerp } from "./general";
+import { lerp } from "./general.js";
 
 export class Vec2 {
   x: number;

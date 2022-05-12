@@ -1,5 +1,5 @@
 
-import { Object2D } from "./object";
+import { Object2D } from "./object.js";
 
 export interface GradientStopDef {
   color: string;

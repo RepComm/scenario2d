@@ -1,6 +1,6 @@
 
-import { Object2D } from "./object";
-import { GradientDef } from "./scene2d";
+import { Object2D } from "./object.js";
+import { GradientDef } from "./scene2d.js";
 
 export class PathObject2D extends Object2D {
   path: Path2D;

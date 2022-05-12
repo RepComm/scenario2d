@@ -1,5 +1,5 @@
 
-import { PathObject2D } from "./pathobject";
+import { PathObject2D } from "./pathobject.js";
 
 export class AnimObject2D extends PathObject2D {
   constructor () {
