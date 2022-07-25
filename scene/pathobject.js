@@ -1,19 +1,5 @@
-
 import { Object2D } from "./object.js";
-import { GradientDef } from "./gradients.js";
-
 export class PathObject2D extends Object2D {
-  path: Path2D;
-  private _d: string;
-  fillStyle: string | CanvasGradient | CanvasPattern;
-  strokeStyle: string | CanvasGradient | CanvasPattern;
-  lineWidth: number;
-  doStroke: boolean;
-  doFill: boolean;
-  fillGradientDef: GradientDef;
-  
-  strokeGradientDef: GradientDef;
-  
   constructor() {
     super();
     this.fillStyle = "white";
@@ -23,40 +9,50 @@ export class PathObject2D extends Object2D {
     this.doFill = true;
     this._d = "";
   }
-  enableStroke(enable: boolean = true): PathObject2D {
+
+  enableStroke(enable = true) {
     this.doStroke = enable;
     return this;
   }
-  enableFill(enable: boolean = true): PathObject2D {
+
+  enableFill(enable = true) {
     this.doFill = enable;
     return this;
   }
-  private setPath(path: Path2D): PathObject2D {
+
+  setPath(path) {
     this.path = path;
     return this;
   }
-  set d (str: string) {
+
+  set d(str) {
     this.path = new Path2D(str);
     this._d = str;
   }
-  get d (): string {
+
+  get d() {
     return this._d;
   }
-  private getPath(): Path2D {
+
+  getPath() {
     return this.path;
   }
-  hasPath(): boolean {
+
+  hasPath() {
     return this.path != null && this.path != undefined;
   }
-  setGradientFill(gradDef: GradientDef): Object2D {
+
+  setGradientFill(gradDef) {
     this.fillGradientDef = gradDef;
     return this;
   }
-  setGradientStroke(gradDef: GradientDef): Object2D {
+
+  setGradientStroke(gradDef) {
     this.strokeGradientDef = gradDef;
     return this;
   }
-  render(ctx: CanvasRenderingContext2D): this {
+
+  render(ctx) {
     this.preRender(ctx);
 
     if (this.path) {
@@ -67,14 +63,17 @@ export class PathObject2D extends Object2D {
           this.fillGradientDef.compile(ctx);
           this.fillStyle = this.fillGradientDef.compiled;
         }
+
         ctx.fillStyle = this.fillStyle;
         ctx.fill(this.path);
       }
+
       if (this.doStroke) {
         if (this.strokeGradientDef && this.strokeGradientDef.needsCompile) {
           this.strokeGradientDef.compile(ctx);
           this.strokeStyle = this.strokeGradientDef.compiled;
         }
+
         ctx.strokeStyle = this.strokeStyle;
         ctx.stroke(this.path);
       }
@@ -83,8 +82,8 @@ export class PathObject2D extends Object2D {
     }
 
     this.renderChildren(ctx);
-
     this.postRender(ctx);
     return this;
   }
+
 }

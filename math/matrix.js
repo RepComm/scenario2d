@@ -1,43 +1,6 @@
-
-import { RAD2DEG, DEG2RAD } from "./general.js";
-import { Vec2 } from "./vec.js";
-
-export interface MatrixDecomposition {
-  x: number;
-  y: number;
-  r: number;
-  sx: number;
-  sy: number;
-  skx: number;
-  sky: number;
-}
-
-export interface MatrixLike {
-  a: number;
-  b: number;
-  c: number;
-  d: number;
-  e: number;
-  f: number;
-}
-
+import { DEG2RAD } from "./general.js";
 export class Matrix {
-  data: Array<number>;
-
-  static tempTransformMatrix: Matrix;
-  static tempRotationMatrix: Matrix;
-
-  static Index: {
-    a: 0,
-    b: 1,
-    c: 2,
-    d: 3,
-    e: 4,
-    f: 5
-  };
-
   constructor() {
-
     if (!Matrix.Index) {
       Matrix.Index = {
         a: 0,
@@ -50,10 +13,10 @@ export class Matrix {
     }
 
     this.data = new Array(6);
-
     this.identity();
   }
-  identity(): this {
+
+  identity() {
     this.a = 1;
     this.b = 0;
     this.c = 0;
@@ -63,7 +26,7 @@ export class Matrix {
     return this;
   }
 
-  decompose(decomp: MatrixDecomposition) {
+  decompose(decomp) {
     decomp.x = this.e;
     decomp.y = this.f;
     decomp.r = 0;
@@ -71,16 +34,13 @@ export class Matrix {
     decomp.sy = 1;
     decomp.skx = 0;
     decomp.sky = 0;
+    let determ = this.det(); // Apply the QR-like decomposition.
 
-    let determ = this.det();
-
-    // Apply the QR-like decomposition.
     if (this.a || this.b) {
       let r = Math.sqrt(this.a * this.a + this.b * this.b);
       decomp.r = this.b > 0 ? Math.acos(this.a / r) : -Math.acos(this.a / r);
       decomp.sx = r;
       decomp.sy = determ / r;
-
       decomp.skx = Math.atan((this.a * this.c + this.b * this.d) / (r * r));
     } else if (this.c || this.d) {
       let s = Math.sqrt(this.c * this.c + this.d * this.d);
@@ -88,12 +48,14 @@ export class Matrix {
       decomp.sx = determ / s;
       decomp.sy = s;
       decomp.sky = Math.atan((this.a * this.c + this.b * this.d) / (s * s));
-    } else { // a = b = c = d = 0
+    } else {
+      // a = b = c = d = 0
       decomp.sx = 0;
-      decomp.sy = 0;// = invalid matrix
+      decomp.sy = 0; // = invalid matrix
     }
   }
-  copy(from: MatrixLike): this {
+
+  copy(from) {
     this.a = from.a;
     this.b = from.b;
     this.c = from.c;
@@ -103,64 +65,71 @@ export class Matrix {
     return this;
   }
 
-  isIdentityOrTranslation(): boolean {
+  isIdentityOrTranslation() {
     return this.a == 1 && this.b == 0 && this.c == 0 && this.d == 1;
   }
 
-  get a(): number {
+  get a() {
     return this.data[Matrix.Index.a];
   }
-  set a(v: number) {
+
+  set a(v) {
     this.data[Matrix.Index.a] = v;
   }
 
-  get b(): number {
+  get b() {
     return this.data[Matrix.Index.b];
   }
-  set b(v: number) {
+
+  set b(v) {
     this.data[Matrix.Index.b] = v;
   }
 
-  get c(): number {
+  get c() {
     return this.data[Matrix.Index.c];
   }
-  set c(v: number) {
+
+  set c(v) {
     this.data[Matrix.Index.c] = v;
   }
 
-  get d(): number {
+  get d() {
     return this.data[Matrix.Index.d];
   }
-  set d(v: number) {
+
+  set d(v) {
     this.data[Matrix.Index.d] = v;
   }
 
-  get e(): number {
+  get e() {
     return this.data[Matrix.Index.e];
   }
-  set e(v: number) {
+
+  set e(v) {
     this.data[Matrix.Index.e] = v;
   }
 
-  get f(): number {
+  get f() {
     return this.data[Matrix.Index.f];
   }
-  set f(v: number) {
+
+  set f(v) {
     this.data[Matrix.Index.f] = v;
   }
 
-  det(): number {
+  det() {
     return this.a * this.d - this.b * this.c;
   }
-
   /**Calculates the inverse matrix and outputs to the 'destination' matrix, which is self by default
    * 
    * @param destination 
    * @returns 
    */
-  inverse(destination: Matrix = this): this {
 
+
+  inverse(destination = this) {
     let det = this.det(); //this.a * this.d - this.b * this.c;
+
     if (det) {
       if (this.isIdentityOrTranslation()) {
         destination.e = -this.e;
@@ -175,40 +144,41 @@ export class Matrix {
         destination.f = -(this.a * this.f - this.e * this.b) * det;
       }
     }
+
     return this;
   }
-  rotate(theta: number): this {
+
+  rotate(theta) {
     theta *= DEG2RAD;
-
     let cos = Math.cos(theta),
-			sin = Math.sin(theta);
-		this.transform(cos, sin, -sin, cos, 0, 0);
+        sin = Math.sin(theta);
+    this.transform(cos, sin, -sin, cos, 0, 0);
     return this;
   }
-  scale(sx: number): this {
-		this.transform(sx, 0, 0, sx, 0, 0);
-    return this;
-	}
-  multiply (b: Matrix): this {
-    this.transform(
-      b.a, b.b, b.c, b.d, b.e, b.f
-    );
-    return this;
-  }
-  transform(a2: number, b2: number, c2: number, d2: number, e2: number, f2: number) {
 
+  scale(sx) {
+    this.transform(sx, 0, 0, sx, 0, 0);
+    return this;
+  }
+
+  multiply(b) {
+    this.transform(b.a, b.b, b.c, b.d, b.e, b.f);
+    return this;
+  }
+
+  transform(a2, b2, c2, d2, e2, f2) {
     let a1 = this.a,
-      b1 = this.b,
-      c1 = this.c,
-      d1 = this.d,
-      e1 = this.e,
-      f1 = this.f;
-
+        b1 = this.b,
+        c1 = this.c,
+        d1 = this.d,
+        e1 = this.e,
+        f1 = this.f;
     /* matrix order (canvas compatible):
     * ace
     * bdf
     * 001
     */
+
     this.a = a1 * a2 + c1 * b2;
     this.b = b1 * a2 + d1 * b2;
     this.c = a1 * c2 + c1 * d2;
@@ -217,63 +187,50 @@ export class Matrix {
     this.f = b1 * e2 + d1 * f2 + f1;
   }
 
-  translate (tx: number, ty: number) {
-		return this.transform(1, 0, 0, 1, tx, ty);
-	}
+  translate(tx, ty) {
+    return this.transform(1, 0, 0, 1, tx, ty);
+  } // this = translation * this
 
-  // this = translation * this
-  translateRight(tx, ty): this {
+
+  translateRight(tx, ty) {
     this.e += tx || 0;
     this.f += ty || 0;
     return this;
   }
 
-  equal(m: Matrix, p: number = 1E-6): boolean {
+  equal(m, p = 1E-6) {
     if (this === m) return true;
-    return (
-      Math.abs(this.a - m.a) <= p &&
-      Math.abs(this.b - m.b) <= p &&
-      Math.abs(this.c - m.c) <= p &&
-      Math.abs(this.d - m.d) <= p &&
-      Math.abs(this.e - m.e) <= p &&
-      Math.abs(this.f - m.f) <= p
-    );
+    return Math.abs(this.a - m.a) <= p && Math.abs(this.b - m.b) <= p && Math.abs(this.c - m.c) <= p && Math.abs(this.d - m.d) <= p && Math.abs(this.e - m.e) <= p && Math.abs(this.f - m.f) <= p;
   }
 
-  set(a: number, b: number, c: number, d: number, e: number, f: number): this {
+  set(a, b, c, d, e, f) {
     this.a = a;
     this.b = b;
     this.c = c;
     this.d = d;
     this.e = e;
     this.f = f;
-
     return this;
   }
 
-  toString(): string {
+  toString() {
     return `matrix(${this.data.join(",")})`;
   }
 
-  transformPoint(point: Vec2): this {
-    point.set(
-      point.x * this.a + point.y * this.c + this.e,
-      point.x * this.b + point.y * this.d + this.f
-    );
+  transformPoint(point) {
+    point.set(point.x * this.a + point.y * this.c + this.e, point.x * this.b + point.y * this.d + this.f);
     return this;
   }
 
-  trs(t: Matrix, r: Matrix, s: Matrix) {
+  trs(t, r, s) {
     this.multiply(t);
     this.multiply(r);
     this.multiply(s);
   }
+
 }
-
 Matrix.tempTransformMatrix = new Matrix();
-Matrix.tempRotationMatrix = new Matrix();
-
-// Matrix.Index = {
+Matrix.tempRotationMatrix = new Matrix(); // Matrix.Index = {
 //   a: 0,
 //   b: 1,
 //   c: 2,

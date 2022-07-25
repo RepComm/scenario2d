@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+  </head>
+  <body>
+
+    <!--Polyfill for using import maps (in my case for firefox)-->
+    <script async src="./es-module-shims.js"></script>
+
+    <!--Map my own depednecy to its node_modules location, you can do this for other deps too!-->
+    <script type="importmap">
+    {
+      "imports": {
+        "@repcomm/exponent-ts": "./node_modules/@repcomm/exponent-ts/docs/mod.js"
+      }
+    }
+    </script>
+    
+    <script type="module" src="./index.js"></script>
+  </body>
+</html>

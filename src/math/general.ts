@@ -17,3 +17,6 @@ export const randomByte = (): number => Math.floor(Math.random()*255);
 export function lerp (from: number, to: number, by: number): number {
   return from*(1-by)+to*by;
 }
+
+export let RAD2DEG = 180 / Math.PI;
+export let DEG2RAD = Math.PI / 180;

@@ -1,111 +1,117 @@
-
 import { clamp, lerp } from "./general.js";
-
-export interface Vec2Like {
-  x: number;
-  y: number;
-}
-
-export class Vec2 implements Vec2Like {
-  x: number;
-  y: number;
+export class Vec2 {
   constructor() {
     this.x = 0;
     this.y = 0;
   }
-  set(x: number, y: number): this {
+
+  set(x, y) {
     this.x = x;
     this.y = y;
     return this;
   }
-  getX(): number {
+
+  getX() {
     return this.x;
   }
-  getY(): number {
+
+  getY() {
     return this.y;
   }
-  setX(x: number): this {
+
+  setX(x) {
     this.x = x;
     return this;
   }
-  setY(y: number): this {
+
+  setY(y) {
     this.y = y;
     return this;
   }
   /**Uses other vector's same named components, returns self*/
-  add(other: Vec2Like): this {
+
+
+  add(other) {
     this.x += other.x;
     this.y += other.y;
     return this;
   }
   /**Uses other vector's same named components, returns self*/
-  sub(other: Vec2Like): this {
+
+
+  sub(other) {
     this.x -= other.x;
     this.y -= other.y;
     return this;
   }
   /**Uses other vector's same named components, returns self*/
-  div(other: Vec2Like): this {
+
+
+  div(other) {
     this.x /= other.x;
     this.y /= other.y;
     return this;
   }
   /**Uses other vector's same named components, returns self*/
-  mul(other: Vec2Like): this {
+
+
+  mul(other) {
     this.x *= other.x;
     this.y *= other.y;
     return this;
   }
-  copy(other: Vec2Like): this {
+
+  copy(other) {
     this.set(other.x, other.y);
     return this;
   }
-  divScalar(scalar: number): this {
+
+  divScalar(scalar) {
     this.x /= scalar;
     this.y /= scalar;
     return this;
   }
-  mulScalar(scalar: number): this {
+
+  mulScalar(scalar) {
     this.x *= scalar;
     this.y *= scalar;
     return this;
   }
-  magnitude(): number {
-    return Math.sqrt(
-      Math.pow(this.x, 2) +
-      Math.pow(this.y, 2)
-    )
+
+  magnitude() {
+    return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
   }
-  normalize(): Vec2 {
+
+  normalize() {
     this.divScalar(this.magnitude());
     return this;
   }
-  distance(other: Vec2Like): number {
-    return (
-      Math.sqrt(
-        Math.pow(this.x - other.x, 2) +
-        Math.pow(this.y - other.y, 2)
-      )
-    );
+
+  distance(other) {
+    return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
   }
-  lerp(other: Vec2Like, by: number): this {
-    this.set(
-      lerp(this.x, other.x, by),
-      lerp(this.y, other.y, by)
-    );
+
+  lerp(other, by) {
+    this.set(lerp(this.x, other.x, by), lerp(this.y, other.y, by));
     return this;
   }
-  centerOf(...vecs: Vec2Like[]): this {
+
+  centerOf(...vecs) {
     if (vecs.length < 1) return this; //don't divide by zero
+
     this.set(0, 0);
+
     for (let other of vecs) {
       this.add(other);
     }
+
     this.divScalar(vecs.length);
     return this;
   }
-  clamp(xmin: number, xmax: number, ymin: number, ymax: number): this {
+
+  clamp(xmin, xmax, ymin, ymax) {
     this.set(clamp(this.x, xmin, xmax), clamp(this.y, ymin, ymax));
     return this;
   }
+
 }

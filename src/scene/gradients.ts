@@ -1,6 +1,4 @@
 
-import { Object2D } from "./object.js";
-
 export interface GradientStopDef {
   color: string;
 }
@@ -33,12 +31,16 @@ export class GradientDef {
   copyFrom?: string;
   compiled: CanvasGradient;
 
-  private stops: GradientStopsMap;
+  stops: GradientStopsMap;
+  isDirty: boolean;
+
   constructor () {
     this.stops = new Map();
+    this.isDirty = true;
   }
   setStop (offset: number, stopDef: GradientStopDef) {
     this.stops.set(offset, stopDef);
+    this.isDirty = true;
   }
   getStop (index: number): GradientStopDef {
     return this.stops.get(index);
@@ -61,7 +63,11 @@ export class GradientDef {
         offset, def.color
       )
     });
+    this.isDirty = false;
     return this.compiled;
+  }
+  get needsCompile (): boolean {
+    return this.isDirty;
   }
   getCompiled (): CanvasGradient {
     return this.compiled;
@@ -74,15 +80,14 @@ export interface GradientForEachCallback {
   (grad: GradientDef, id: string): void;
 }
 
-export class Scene2D extends Object2D {
-  private gradients: GradientDefsMap;
+export class GradientBank {
+  gradients: GradientDefsMap;
   width: number;
   height: number;
   constructor () {
-    super();
     this.gradients = new Map();
   }
-  setGradient(id: string, def: GradientDef): Scene2D {
+  setGradient(id: string, def: GradientDef): this {
     this.gradients.set(id, def);
     return this;
   }
