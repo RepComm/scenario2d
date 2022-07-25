@@ -1,11 +1,11 @@
 {
   "name": "@repcomm/scenario2d",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "minimal 2d scene graph library for web canvas",
   "main": "./mod.js",
   "types": "./mod.d.ts",
   "files": [
-    "./**/*"
+    "*"
   ],
   "repository": {
     "type": "git",
