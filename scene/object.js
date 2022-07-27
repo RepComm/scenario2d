@@ -108,26 +108,9 @@ export class Object2D {
     this.postRenderEnded = false;
     ctx.save();
     this.localTransform.renderMatrix();
-    this.renderGlobalTransform();
-    ctx.setTransform(this.globalTransform.matrix.a, this.globalTransform.matrix.b, this.globalTransform.matrix.c, this.globalTransform.matrix.d, this.globalTransform.matrix.e, this.globalTransform.matrix.f); // ctx.setTransform(
-    //   this._localTransform.matrix.a,
-    //   this._localTransform.matrix.b,
-    //   this._localTransform.matrix.c,
-    //   this._localTransform.matrix.d,
-    //   this._localTransform.matrix.e,
-    //   this._localTransform.matrix.f
-    // );
-    // ctx.translate(
-    //   this.localTransform.position.x,
-    //   this.localTransform.position.y
-    // );
-    // ctx.rotate(
-    //   this.localTransform.rotation
-    // );
-    // ctx.scale(
-    //   this.localTransform.scale,
-    //   this.localTransform.scale
-    // );
+    this.renderGlobalTransform(); //preserve arbitrary scene transformations not performed by this lib on the canvas (such as camera movement)
+
+    ctx.transform(this.localTransform.matrix.a, this.localTransform.matrix.b, this.localTransform.matrix.c, this.localTransform.matrix.d, this.localTransform.matrix.e, this.localTransform.matrix.f);
   }
 
   postRender(ctx) {

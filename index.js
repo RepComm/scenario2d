@@ -23,11 +23,12 @@ async function main() {
 
   }
 
-  scene.localTransform.position.set(200, 200);
   let tb = new TestBox();
+  tb.localTransform.position.set(100, 100);
   scene.add(tb);
   setInterval(() => {
-    tb.localTransform.rotation += 1;
+    scene.localTransform.rotation -= 1; // tb.localTransform.rotation += 1;
+
     drawing.setNeedsRedraw(true);
   }, 1000 / 30);
 }
